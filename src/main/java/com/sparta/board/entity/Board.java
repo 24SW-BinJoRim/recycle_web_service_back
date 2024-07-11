@@ -22,11 +22,11 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 65535)
+    @Column(nullable = false, length = 500) // 초기 length 값이 65535으로 테이블 생성이 안됐었으나 길이를 줄임으로써 해결
     private String contents;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "board_user_id", nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)

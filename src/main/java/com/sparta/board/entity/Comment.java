@@ -19,7 +19,7 @@ public class Comment extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable = false, length = 200)
     private String contents;
 
     @ManyToOne
