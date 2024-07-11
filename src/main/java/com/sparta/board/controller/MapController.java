@@ -1,7 +1,7 @@
-
 /*
 package com.sparta.board.controller;
 
+import com.sparta.board.dto.TrashDto;
 import com.sparta.board.entity.Trash;
 import com.sparta.board.repository.TrashRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +17,21 @@ public class MapController {
 
     @ResponseBody
     @GetMapping("/trash/{page}/{perPage}")
-    public TrashResponse<List<GetRecommmendSuportConditionsRes>> GetRecommmendSuportConditionsRes(
+    public TrashResponseDto<List<TrashDto>> GetRecommmendSuportConditionsRes(
             @PathVariable("page")int page, @PathVariable("perPage")int perPage
-            @RequestParam int age, @RequestParam int
-    )
+            @RequestParam int lat, @RequestParam int lng, @RequestParam int title, @RequestParam int detail, @RequestParam int type) {
+
+        try{
+            List<GetRecommendSupportConditionsRes> getRecommendSupportConditionsRes = supportConditionsProvider.getRecommendSupportConditions(page, perPage, age, income_range, gender, area, personalArray, householdslArray);
+            return new TrashResponse<>(getRecommendSupportConditionsRes);
+        }catch (BaseException exception){
+            logger.error("Error", exception);
+            return new TrashResponse<>((exception.getStatus()));
+        }
+    }
+    }
+
 
 }
+
  */
