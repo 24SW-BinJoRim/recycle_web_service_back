@@ -1,37 +1,37 @@
-/*
 package com.sparta.board.controller;
 
-import com.sparta.board.dto.TrashDto;
-import com.sparta.board.entity.Trash;
-import com.sparta.board.repository.TrashRepository;
+import com.sparta.board.service.MapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
 
 public class MapController {
-    private final TrashRepository trashRepository;
+
+    private final MapService mapService;
 
     @ResponseBody
-    @GetMapping("/trash/{page}/{perPage}")
-    public TrashResponseDto<List<TrashDto>> GetRecommmendSuportConditionsRes(
-            @PathVariable("page")int page, @PathVariable("perPage")int perPage
-            @RequestParam int lat, @RequestParam int lng, @RequestParam int title, @RequestParam int detail, @RequestParam int type) {
+    @GetMapping("/map")
+    public List<Map<String, Object>> getAllMapDetails() {
+        List<Object[]> results = mapService.getAllMapDetails();
+        List<Map<String, Object>> trashs = new ArrayList<>();
 
-        try{
-            List<GetRecommendSupportConditionsRes> getRecommendSupportConditionsRes = supportConditionsProvider.getRecommendSupportConditions(page, perPage, age, income_range, gender, area, personalArray, householdslArray);
-            return new TrashResponse<>(getRecommendSupportConditionsRes);
-        }catch (BaseException exception){
-            logger.error("Error", exception);
-            return new TrashResponse<>((exception.getStatus()));
+        for (Object[] result : results) {
+            Map<String, Object> trashMap = new HashMap<>();
+            trashMap.put("lat", result[0]);
+            trashMap.put("lng", result[1]);
+            trashMap.put("title", result[2]);
+            trashMap.put("detail", result[3]);
+            trashMap.put("type", result[4]);
+            trashs.add(trashMap);
         }
+        return trashs;
     }
-    }
-
-
 }
 
- */

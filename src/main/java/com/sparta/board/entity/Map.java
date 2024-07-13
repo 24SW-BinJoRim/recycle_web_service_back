@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @ToString
-public class Trash {
+public class Map {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

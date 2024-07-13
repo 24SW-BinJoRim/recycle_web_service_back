@@ -1,7 +1,6 @@
 package com.sparta.board.dto;
 
-import com.sparta.board.entity.Cigarette;
-import com.sparta.board.entity.Clothes;
+import com.sparta.board.entity.Map;
 import lombok.*;
 
 @Builder
@@ -9,7 +8,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CigaretteDto {
+public class MapDto {
 
     private String address; // 주소
     private String lat; // 위도
@@ -18,8 +17,8 @@ public class CigaretteDto {
     private String detail; // 설명
     private String type; // 종류
 
-    public Cigarette toEntity(){
-        return Cigarette.builder()
+    public Map toEntity(){
+        return Map.builder()
                 .address(this.address)
                 .lat(this.lat)
                 .lng(this.lng)
