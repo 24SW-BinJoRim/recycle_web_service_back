@@ -1,5 +1,5 @@
 package com.sparta.board.config;
-
+/*
 import com.sparta.board.dto.MapDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -17,7 +17,7 @@ public class FileReaderJopConfig {
     private final CsvMapReader csvMapReader; //추가
     private final CsvMapWriter csvMapWriter; //추가
 
-    private static final int chunkSize = 500; //데이터 처리할 row size
+    private static final int chunkSize = 2000; //데이터 처리할 row size
 
     // 쓰레기통 정보 저장 Job, Job은 여러 Step을 가질 수 있음.
     @Bean
@@ -38,3 +38,5 @@ public class FileReaderJopConfig {
                 .build();
     }
 }
+
+ */
