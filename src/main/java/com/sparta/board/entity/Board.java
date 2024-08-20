@@ -22,7 +22,8 @@ public class Board extends Timestamped {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false, length = 500) // 초기 length 값이 65535으로 테이블 생성이 안됐었으나 길이를 줄임으로써 해결
+    // 초기 length 값이 65535으로 테이블 생성이 안됐었으나 길이를 줄임으로써 해결
+    @Column(nullable = false, length = 500)
     private String contents;
 
     @ManyToOne

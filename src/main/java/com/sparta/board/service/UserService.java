@@ -37,18 +37,19 @@ public class UserService {
     // 회원가입
     @Transactional
     public ApiResponseDto<SuccessResponse> signup(SignupRequestDto requestDto) {
+        String userid = requestDto.getUserid();
         String username = requestDto.getUsername();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         // 회원 중복 확인
-        Optional<User> found = userRepository.findByUsername(username);
+        Optional<User> found = userRepository.findByUserid(userid);
         if (found.isPresent()) {
             throw new RestApiException(ErrorType.DUPLICATED_USERNAME);
         }
 
         // 입력한 username, password, admin 으로 user 객체 만들어 repository 에 저장
         UserRoleEnum role = requestDto.getAdmin() ? UserRoleEnum.ADMIN : UserRoleEnum.USER;
-        userRepository.save(User.of(username, password, role));
+        userRepository.save(User.of(userid, username, password, role));
 
         return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "회원가입 성공"));
     }
@@ -56,11 +57,11 @@ public class UserService {
     // 로그인
     @Transactional(readOnly = true)
     public ApiResponseDto<SuccessResponse> login(LoginRequestDto requestDto, HttpServletResponse response) {
-        String username = requestDto.getUsername();
+        String userid = requestDto.getUserid();
         String password = requestDto.getPassword();
 
         // 사용자 확인 & 비밀번호 확인
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUserid(userid);
         if (user.isEmpty() || !passwordEncoder.matches(password, user.get().getPassword())) {
             throw new RestApiException(ErrorType.NOT_MATCHING_INFO);
         }

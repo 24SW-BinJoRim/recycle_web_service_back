@@ -42,7 +42,7 @@ public class BoardService {
                     .sort(Comparator.comparing(Comment::getModifiedAt)
                             .reversed());
 
-            // 대댓글은 제외 부분 작성
+            // 대댓글은 제외 부분 작성y
             List<CommentResponseDto> commentList = new ArrayList<>();
             for (Comment comment : board.getCommentList()) {
                 if (comment.getParentCommentId() == null) {

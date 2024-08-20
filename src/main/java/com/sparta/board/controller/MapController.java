@@ -17,7 +17,7 @@ public class MapController {
     private final MapService mapService;
 
     @ResponseBody
-    @GetMapping("/map")
+    @GetMapping("/eoditsseu/api/maps")
     public List<Map<String, Object>> getAllMapDetails() {
         List<Object[]> results = mapService.getAllMapDetails();
         List<Map<String, Object>> trashs = new ArrayList<>();
@@ -33,5 +33,7 @@ public class MapController {
         }
         return trashs;
     }
+
+
 }
 

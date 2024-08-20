@@ -19,31 +19,31 @@ public class BoardController {
     private final BoardService boardService;
 
     // 게시글 전체 목록 조회
-    @GetMapping("/api/posts")
+    @GetMapping("/eoditsseu/api/used-transaction/data")
     public ApiResponseDto<List<BoardResponseDto>> getPosts() {
         return boardService.getPosts();
     }
 
     // 게시글 작성
-    @PostMapping("/api/post")
+    @PostMapping("/eoditsseu/api/used-transaction/data/submit")
     public ApiResponseDto<BoardResponseDto> createPost(@RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.createPost(requestsDto, userDetails.getUser());
     }
 
     // 선택된 게시글 조회
-    @GetMapping("/api/post/{id}")
+    @GetMapping("/eoditsseu/api/used-transaction/data/{id}")
     public ApiResponseDto<BoardResponseDto> getPost(@PathVariable Long id) {
         return boardService.getPost(id);
     }
 
     // 선택된 게시글 수정
-    @PutMapping("/api/post/{id}")
+    @PutMapping("/eoditsseu/api/used-transaction/data/edit")
     public ApiResponseDto<BoardResponseDto> updatePost(@PathVariable Long id, @RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.updatePost(id, requestsDto, userDetails.getUser());
     }
 
     // 선택된 게시글 삭제
-    @DeleteMapping("/api/post/{id}")
+    @DeleteMapping("/eoditsseu/api/used-transaction/data/delete")
     public ApiResponseDto<SuccessResponse> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.deletePost(id, userDetails.getUser());
     }

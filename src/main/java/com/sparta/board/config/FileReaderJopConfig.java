@@ -1,5 +1,5 @@
 package com.sparta.board.config;
-/*
+
 import com.sparta.board.dto.MapDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -38,5 +38,3 @@ public class FileReaderJopConfig {
                 .build();
     }
 }
-
- */

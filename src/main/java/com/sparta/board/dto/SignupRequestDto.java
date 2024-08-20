@@ -9,6 +9,8 @@ public class SignupRequestDto {
 
     // 아이디 유효성 검사
     @Pattern(regexp = "^[a-z0-9]{4,10}$", message = "아이디는 4~10자리 영문 소문자(a~z),숫자(0~9)를 사용하세요!")
+    private String userid;
+
     private String username;
 
     // 비밀번호 유효성 검사

@@ -18,12 +18,12 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("eoditsseu/api/users")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public ApiResponseDto<SuccessResponse> signup(@Valid @RequestBody SignupRequestDto requestDto) {
         return userService.signup(requestDto);
     }
@@ -33,8 +33,10 @@ public class UserController {
         return userService.login(requestDto, response);
     }
 
+    /*
     @PostMapping("/signout")
     public ApiResponseDto<SuccessResponse> signout(@RequestBody LoginRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return userService.signout(requestDto, userDetails.getUser());
     }
+    */
 }

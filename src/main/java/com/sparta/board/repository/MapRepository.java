@@ -11,4 +11,6 @@ public interface MapRepository extends JpaRepository<Map, Long> {
     @Query("SELECT m.lat, m.lng, m.title, m.detail, m.type FROM Map m")
     List<Object[]> findAllMapDetails();
 
+
+
 }
