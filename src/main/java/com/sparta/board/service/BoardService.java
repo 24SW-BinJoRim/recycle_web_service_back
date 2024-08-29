@@ -5,6 +5,7 @@ import com.sparta.board.common.ResponseUtils;
 import com.sparta.board.common.SuccessResponse;
 import com.sparta.board.dto.BoardRequestsDto;
 import com.sparta.board.dto.BoardResponseDto;
+import com.sparta.board.dto.BoardSearchDto;
 import com.sparta.board.dto.CommentResponseDto;
 import com.sparta.board.entity.Board;
 import com.sparta.board.entity.Comment;
@@ -14,6 +15,7 @@ import com.sparta.board.entity.enumSet.UserRoleEnum;
 import com.sparta.board.exception.RestApiException;
 import com.sparta.board.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BoardService {
 
     private final BoardRepository boardRepository;
@@ -42,7 +45,7 @@ public class BoardService {
                     .sort(Comparator.comparing(Comment::getModifiedAt)
                             .reversed());
 
-            // 대댓글은 제외 부분 작성y
+            // 대댓글은 제외 부분 작성
             List<CommentResponseDto> commentList = new ArrayList<>();
             for (Comment comment : board.getCommentList()) {
                 if (comment.getParentCommentId() == null) {
@@ -56,6 +59,47 @@ public class BoardService {
 
         return ResponseUtils.ok(responseDtoList);
 
+    }
+
+    // 검색한 게시글 조회 (제목 검색)
+    @Transactional(readOnly = true)
+    public ApiResponseDto<List<BoardResponseDto>> searchPost(BoardSearchDto boardSearchDto) {
+        //String boardType = boardSearchDto.getBoardType();
+        String keyword = boardSearchDto.getKeyword();
+        log.info("Searching for keyword: {}", keyword);
+
+        // 검색한 제목에 해당하는 게시글이 있는지 확인
+        List<Board> boardList = boardRepository.findByKeyword(keyword);
+
+        /*
+        if (boardList.isEmpty()) { // 해당 게시글이 없다면
+            log.warn("No results found for keyword: {}", keyword);
+            throw new RestApiException(ErrorType.NOT_FOUND_WRITING);
+        }
+
+         */
+
+        List<BoardResponseDto> responseDtoList = new ArrayList<>();
+
+        for (Board board : boardList) {
+            // 댓글리스트 작성일자 기준 내림차순 정렬
+            board.getCommentList()
+                    .sort(Comparator.comparing(Comment::getModifiedAt)
+                            .reversed());
+
+            // 대댓글은 제외 부분 작성
+            List<CommentResponseDto> commentList = new ArrayList<>();
+            for (Comment comment : board.getCommentList()) {
+                if (comment.getParentCommentId() == null) {
+                    commentList.add(CommentResponseDto.from(comment));
+                }
+            }
+
+            // List<BoardResponseDto> 로 만들기 위해 board 를 BoardResponseDto 로 만들고, list 에 dto 를 하나씩 넣는다.
+            responseDtoList.add(BoardResponseDto.from(board, commentList));
+        }
+
+        return ResponseUtils.ok(responseDtoList);
     }
 
     // 게시글 작성

@@ -3,6 +3,8 @@ package com.sparta.board.dto;
 import com.sparta.board.entity.Map;
 import lombok.*;
 
+import java.util.Objects;
+
 @Builder
 @Getter
 @Setter
@@ -26,5 +28,22 @@ public class MapDto {
                 .detail(this.detail)
                 .type(this.type)
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MapDto mapDto = (MapDto) o;
+        return Objects.equals(lat, mapDto.lat) &&
+                Objects.equals(lng, mapDto.lng) &&
+                Objects.equals(title, mapDto.title) &&
+                Objects.equals(detail, mapDto.detail) &&
+                Objects.equals(type, mapDto.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lat, lng, title, detail, type);
     }
 }

@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     // 중복 회원가입 방지를 위해 같은 이름의 username 있는지 찾는다.
-    Optional<User> findByUserid(String userid);
+    Optional<User> findByUserid(String username);
 }

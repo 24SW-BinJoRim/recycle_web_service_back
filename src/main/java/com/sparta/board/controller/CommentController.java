@@ -12,25 +12,25 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/eoditsseu/api")
+@RequestMapping("/eoditsseu/api/comments")
 public class CommentController {
 
     private final CommentService commentService;
 
     // 댓글 작성
-    @PostMapping("/comment/{id}")   // 여기서 ID는 게시글의 id
+    @PostMapping("/{id}")   // 여기서 ID는 게시글의 id
     public ApiResponseDto<CommentResponseDto> createComment(@PathVariable Long id, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.createComment(id, requestDto, userDetails.getUser());
     }
 
     // 댓글 수정
-    @PutMapping("/comment/{id}")    // 여기서 ID는 댓글의 id
+    @PutMapping("/{id}")    // 여기서 ID는 댓글의 id
     public ApiResponseDto<CommentResponseDto> updateComment(@PathVariable Long id, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.updateComment(id, requestDto, userDetails.getUser());
     }
 
     // 댓글 삭제
-    @DeleteMapping("/comment/{id}")     // 여기서 ID는 댓글의 id
+    @DeleteMapping("/{id}")     // 여기서 ID는 댓글의 id
     public ApiResponseDto<SuccessResponse> deleteComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return commentService.deleteComment(id, userDetails.getUser());
     }

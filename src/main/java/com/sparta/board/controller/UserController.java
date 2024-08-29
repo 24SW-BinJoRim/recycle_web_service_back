@@ -7,6 +7,7 @@ import com.sparta.board.dto.SignupRequestDto;
 import com.sparta.board.security.UserDetailsImpl;
 import com.sparta.board.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,14 +19,14 @@ import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("eoditsseu/api/users")
+@RequestMapping("/eoditsseu/api/users")
 public class UserController {
 
     private final UserService userService;
 
     @PostMapping("/register")
-    public ApiResponseDto<SuccessResponse> signup(@Valid @RequestBody SignupRequestDto requestDto) {
-        return userService.signup(requestDto);
+    public ApiResponseDto<SuccessResponse> register(@Valid @RequestBody SignupRequestDto requestDto) {
+        return userService.register(requestDto);
     }
 
     @PostMapping("/login")
