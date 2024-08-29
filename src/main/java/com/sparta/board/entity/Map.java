@@ -1,5 +1,6 @@
 package com.sparta.board.entity;
 
+import com.sparta.board.entity.enumSet.UserRoleEnum;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,4 +23,25 @@ public class Map {
     private String title; // 이름
     private String detail; // 설명
     private String type; // 종류
+
+    @Builder
+    private Map(String address, String lat, String lng, String title, String detail, String type) {
+        this.address = address;
+        this.lat = lat;
+        this.lng = lng;
+        this.title = title;
+        this.detail = detail;
+        this.type = type;
+    }
+
+    public static Map of(String address, String lat, String lng, String title, String detail, String type) {
+        return Map.builder()
+                .address(address)
+                .lat(lat)
+                .lng(lng)
+                .title(title)
+                .detail(detail)
+                .type(type)
+                .build();
+    }
 }

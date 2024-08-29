@@ -11,7 +11,8 @@ import java.util.List;
 public class CommentResponseDto {
     private Long id;
     private String contents;
-    private String username;
+    private String userid;
+    private String nickname;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Integer likeCount;
@@ -21,7 +22,8 @@ public class CommentResponseDto {
     private CommentResponseDto(Comment entity) {
         this.id = entity.getId();
         this.contents = entity.getContents();
-        this.username = entity.getUser().getUsername();
+        this.userid = entity.getUser().getUserid();
+        this.nickname = entity.getUser().getNickname();
         this.createdAt = entity.getCreatedAt();
         this.modifiedAt = entity.getModifiedAt();
         this.likeCount = (int) entity.getLikesList().stream().count();

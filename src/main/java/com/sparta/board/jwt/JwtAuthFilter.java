@@ -32,6 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (token == null || !jwtUtil.validateToken(token)) {
             request.setAttribute("exception", ErrorType.NOT_VALID_TOKEN);
             filterChain.doFilter(request, response);
+
             return;
         }
 

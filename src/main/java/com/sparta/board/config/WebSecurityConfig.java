@@ -46,9 +46,10 @@ public class WebSecurityConfig {
         // 기본 설정인 Session 방식 사용하지 않고 JWT 방식 사용
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.authorizeRequests().antMatchers("/api/user/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/posts").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/post/{id}").permitAll()
+        http.authorizeRequests().antMatchers("/eoditsseu/api/users/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/eoditsseu/api/maps").permitAll()
+                .antMatchers(HttpMethod.GET, "/eoditsseu/api/used-transaction/data").permitAll()
+                .antMatchers(HttpMethod.GET, "/eoditsseu/api/information/data").permitAll()
                 .anyRequest().authenticated()
                 .and().exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

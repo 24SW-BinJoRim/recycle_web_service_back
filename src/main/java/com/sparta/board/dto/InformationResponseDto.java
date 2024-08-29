@@ -1,6 +1,7 @@
 package com.sparta.board.dto;
 
 import com.sparta.board.entity.Board;
+import com.sparta.board.entity.Information;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class BoardResponseDto {
+public class InformationResponseDto {
     private Long id;
     private String title;
     private String contents;
@@ -20,7 +21,7 @@ public class BoardResponseDto {
     private List<CommentResponseDto> commentList;
 
     @Builder
-    private BoardResponseDto(Board entity, List<CommentResponseDto> list) {
+    private InformationResponseDto(Information entity, List<CommentResponseDto> list) {
         this.id = entity.getId();
         this.title = entity.getTitle();
         this.contents = entity.getContents();
@@ -32,7 +33,7 @@ public class BoardResponseDto {
         this.commentList = list;
     }
 
-    private BoardResponseDto(Board entity) {
+    private InformationResponseDto(Information entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
         this.contents = entity.getContents();
@@ -44,15 +45,14 @@ public class BoardResponseDto {
         this.commentList = entity.getCommentList().stream().map(CommentResponseDto::from).toList();
     }
 
-    public static BoardResponseDto from(Board entity, List<CommentResponseDto> list) {
-        return BoardResponseDto.builder()
+    public static InformationResponseDto from(Information entity, List<CommentResponseDto> list) {
+        return InformationResponseDto.builder()
                 .entity(entity)
                 .list(list)
                 .build();
     }
 
-    public static BoardResponseDto from(Board entity) {
-        return new BoardResponseDto(entity);
+    public static InformationResponseDto from(Information entity) {
+        return new InformationResponseDto(entity);
     }
-
 }

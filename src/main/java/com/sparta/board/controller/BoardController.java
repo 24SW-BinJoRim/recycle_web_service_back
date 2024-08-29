@@ -4,6 +4,7 @@ import com.sparta.board.common.ApiResponseDto;
 import com.sparta.board.common.SuccessResponse;
 import com.sparta.board.dto.BoardRequestsDto;
 import com.sparta.board.dto.BoardResponseDto;
+import com.sparta.board.dto.BoardSearchDto;
 import com.sparta.board.security.UserDetailsImpl;
 import com.sparta.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
@@ -14,36 +15,50 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/eoditsseu/api/used-transaction")
 public class BoardController {
 
     private final BoardService boardService;
 
     // 게시글 전체 목록 조회
-    @GetMapping("/eoditsseu/api/used-transaction/data")
+    @GetMapping("/data")
     public ApiResponseDto<List<BoardResponseDto>> getPosts() {
         return boardService.getPosts();
     }
 
     // 게시글 작성
-    @PostMapping("/eoditsseu/api/used-transaction/data/submit")
+    @PostMapping("/submit")
     public ApiResponseDto<BoardResponseDto> createPost(@RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.createPost(requestsDto, userDetails.getUser());
     }
 
+    // 선택된 게시글 조회 (제목 검색)
+    @GetMapping("/search")
+    public ApiResponseDto<List<BoardResponseDto>> searchPost( @RequestParam String boardType,
+                                                            @RequestParam String keyword) {
+        // DTO에 검색 조건 세팅
+        BoardSearchDto boardDTO = new BoardSearchDto();
+        boardDTO.setBoardType(boardType);
+        boardDTO.setKeyword(keyword);
+
+        // Service 호출
+        return boardService.searchPost(boardDTO);
+    }
+
     // 선택된 게시글 조회
-    @GetMapping("/eoditsseu/api/used-transaction/data/{id}")
-    public ApiResponseDto<BoardResponseDto> getPost(@PathVariable Long id) {
-        return boardService.getPost(id);
+    @GetMapping("/data/{boardId}")
+    public ApiResponseDto<BoardResponseDto> getPost(@PathVariable Long boardId) {
+        return boardService.getPost(boardId);
     }
 
     // 선택된 게시글 수정
-    @PutMapping("/eoditsseu/api/used-transaction/data/edit")
+    @PutMapping("/edit")
     public ApiResponseDto<BoardResponseDto> updatePost(@PathVariable Long id, @RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.updatePost(id, requestsDto, userDetails.getUser());
     }
 
     // 선택된 게시글 삭제
-    @DeleteMapping("/eoditsseu/api/used-transaction/data/delete")
+    @DeleteMapping("/delete")
     public ApiResponseDto<SuccessResponse> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.deletePost(id, userDetails.getUser());
     }

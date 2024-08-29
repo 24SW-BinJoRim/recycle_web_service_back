@@ -15,6 +15,7 @@ import com.sparta.board.repository.CommentRepository;
 import com.sparta.board.repository.LikesRepository;
 import com.sparta.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final JwtUtil jwtUtil;
@@ -36,9 +38,9 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public ApiResponseDto<SuccessResponse> signup(SignupRequestDto requestDto) {
+    public ApiResponseDto<SuccessResponse> register(SignupRequestDto requestDto) {
         String userid = requestDto.getUserid();
-        String username = requestDto.getUsername();
+        String nickname = requestDto.getNickname();
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         // 회원 중복 확인
@@ -49,7 +51,7 @@ public class UserService {
 
         // 입력한 username, password, admin 으로 user 객체 만들어 repository 에 저장
         UserRoleEnum role = requestDto.getAdmin() ? UserRoleEnum.ADMIN : UserRoleEnum.USER;
-        userRepository.save(User.of(userid, username, password, role));
+        userRepository.save(User.of(userid, nickname, password, role));
 
         return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "회원가입 성공"));
     }
@@ -67,7 +69,7 @@ public class UserService {
         }
 
         // header 에 들어갈 JWT 세팅
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.get().getUsername(), user.get().getRole()));
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.get().getUserid(), user.get().getRole()));
 
         return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "로그인 성공"));
 
