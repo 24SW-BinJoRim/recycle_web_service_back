@@ -1,5 +1,6 @@
 package com.sparta.board.entity;
 
+import com.sparta.board.dto.CommentRequestDto;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,32 +25,30 @@ public class Likes {
     @JoinColumn(name = "board_id")
     private Board board;
 
+    @Column(nullable = false)
+    private String boardType;
+
+    @ManyToOne
+    @JoinColumn(name = "information_id")
+    private Information information;
+
     @ManyToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @Builder
-    private Likes(Board board, Comment comment, User user) {
-        this.board = board;
-        this.comment = comment;
-        this.user = user;
-    }
-
-    public static Likes of(Board board, User user) {
-        Likes likes = Likes.builder()
-                .board(board)
-                .user(user)
-                .build();
-        board.getLikesList().add(likes);
+    public static Likes likesForBoard(Board board, User user, String boardType) {
+        Likes likes = new Likes();
+        likes.board = board;
+        likes.user = user;
+        likes.boardType = boardType;
         return likes;
     }
 
-    public static Likes of(Comment comment, User user) {
-        Likes likes = Likes.builder()
-                .comment(comment)
-                .user(user)
-                .build();
-        comment.getLikesList().add(likes);
+    public static Likes likesForInformation(Information information, User user, String boardType) {
+        Likes likes = new Likes();
+        likes.information = information;
+        likes.user = user;
+        likes.boardType = boardType;
         return likes;
     }
 

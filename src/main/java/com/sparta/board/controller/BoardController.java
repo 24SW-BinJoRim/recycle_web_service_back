@@ -22,19 +22,19 @@ public class BoardController {
 
     // 게시글 전체 목록 조회
     @GetMapping("/data")
-    public ApiResponseDto<List<BoardResponseDto>> getPosts() {
+    public List<BoardResponseDto> getPosts() {
         return boardService.getPosts();
     }
 
     // 게시글 작성
     @PostMapping("/submit")
-    public ApiResponseDto<BoardResponseDto> createPost(@RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public BoardResponseDto createPost(@RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.createPost(requestsDto, userDetails.getUser());
     }
 
     // 선택된 게시글 조회 (제목 검색)
     @GetMapping("/search")
-    public ApiResponseDto<List<BoardResponseDto>> searchPost( @RequestParam String boardType,
+    public List<BoardResponseDto> searchPost( @RequestParam String boardType,
                                                             @RequestParam String keyword) {
         // DTO에 검색 조건 세팅
         BoardSearchDto boardDTO = new BoardSearchDto();
@@ -47,19 +47,21 @@ public class BoardController {
 
     // 선택된 게시글 조회
     @GetMapping("/data/{boardId}")
-    public ApiResponseDto<BoardResponseDto> getPost(@PathVariable Long boardId) {
+    public BoardResponseDto getPost(@PathVariable Long boardId) {
         return boardService.getPost(boardId);
     }
 
+    // ** 게시글 수정, 삭제는 프론트에서 미구현됨 !! **
+
     // 선택된 게시글 수정
-    @PutMapping("/edit")
-    public ApiResponseDto<BoardResponseDto> updatePost(@PathVariable Long id, @RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PutMapping("/edit/{id}")
+    public BoardResponseDto updatePost(@PathVariable Long id, @RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.updatePost(id, requestsDto, userDetails.getUser());
     }
 
     // 선택된 게시글 삭제
-    @DeleteMapping("/delete")
-    public ApiResponseDto<SuccessResponse> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @DeleteMapping("/delete/{id}")
+    public Boolean deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return boardService.deletePost(id, userDetails.getUser());
     }
 

@@ -13,8 +13,8 @@ public interface MapRepository extends JpaRepository<Map, Long> {
     @Query("SELECT m.lat, m.lng, m.title, m.detail, m.type FROM Map m")
     List<Object[]> findAllMapDetails();
 
-    @Query("select m.lat, m.lng, m.title, m.detail, m.type from Map m where m.address LIKE %:search%")
-    List<Object[]> findByMapSearchDetails(@Param("search") String search);
+    @Query("select m.lat, m.lng, m.title, m.detail, m.type from Map m where m.address LIKE %:keyword%")
+    List<Object[]> findByMapSearchDetails(@Param("keyword") String keyword);
 
 
 }

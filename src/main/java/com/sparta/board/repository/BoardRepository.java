@@ -14,15 +14,16 @@ import java.util.Optional;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    List<Board> findAllByOrderByModifiedAtDesc();
+    List<Board> findAllByOrderByUpdatedAtDesc();
+    Optional<Board> findById(Long id);
     Optional<Board> findByIdAndUser(Long id, User user);
 
     @Query("SELECT b FROM Board b WHERE b.title LIKE %:keyword%")
     List<Board> findByKeyword(@Param("keyword") String keyword);
 
     // 마이페이지 - 중고거래 게시판 글 반환
-    @Query("SELECT b.title, b.contents, b.id FROM Board b WHERE b.user.userid LIKE %:userid%")
-    List<Object[]> findByUserPost(@Param("userid") String userid);
+    @Query("SELECT b.title, b.contents, b.id FROM Board b WHERE b.user.userid = :userid")
+    List<Object[]> findByUserPost(@Param("userid") Long userid);
 
 
     void deleteAllByUser(User user);

@@ -15,10 +15,10 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userid;
 
     @Column(nullable = false, length = 20)
-    private String userid;
+    private String username;
 
     @Column(nullable = false)
     private String nickname;
@@ -31,16 +31,16 @@ public class User {
     private UserRoleEnum role;
 
     @Builder
-    private User(String userid, String nickname, String password, UserRoleEnum role) {
-        this.userid = userid;
+    private User(String username, String nickname, String password, UserRoleEnum role) {
+        this.username = username;
         this.nickname = nickname;
         this.password = password;
         this.role = role;
     }
 
-    public static User of(String userid, String nickname, String password, UserRoleEnum role) {
+    public static User of(String username, String nickname, String password, UserRoleEnum role) {
         return User.builder()
-                .userid(userid)
+                .username(username)
                 .nickname(nickname)
                 .password(password)
                 .role(role)

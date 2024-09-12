@@ -2,14 +2,12 @@ package com.sparta.board.service;
 
 import com.sparta.board.common.ApiResponseDto;
 import com.sparta.board.common.ResponseUtils;
-import com.sparta.board.dto.BoardResponseDto;
-import com.sparta.board.dto.BoardSearchDto;
-import com.sparta.board.dto.MapDto;
-import com.sparta.board.dto.MapResponseDto;
+import com.sparta.board.dto.*;
 import com.sparta.board.entity.Board;
 import com.sparta.board.entity.enumSet.ErrorType;
 import com.sparta.board.exception.RestApiException;
 import com.sparta.board.repository.MapRepository;
+import com.sparta.board.dto.MapRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,9 +29,9 @@ public class MapService {
 
     // 검색한 게시글 조회 (제목 검색)
     @Transactional(readOnly = true)
-    public ApiResponseDto<List<MapResponseDto>> searchMap(BoardSearchDto boardSearchDto) {
-        //String boardType = boardSearchDto.getBoardType();
-        String keyword = boardSearchDto.getKeyword();
+    public List<MapResponseDto> searchMap(MapRequestDto requestDto) {
+
+        String keyword = requestDto.getKeyword();
         log.info("Searching for keyword: {}", keyword);
 
         // 검색한 제목에 해당하는 게시글이 있는지 확인
@@ -62,7 +60,7 @@ public class MapService {
             responseDtoList.add(responseDto);
         }
 
-        return ResponseUtils.ok(responseDtoList);
+        return responseDtoList;
     }
 
 }

@@ -1,11 +1,7 @@
 package com.sparta.board.controller;
 
-import com.sparta.board.common.ApiResponseDto;
-import com.sparta.board.dto.BoardResponseDto;
-import com.sparta.board.dto.BoardSearchDto;
-import com.sparta.board.dto.UserRequestDto;
+import com.sparta.board.dto.MypageRequestDto;
 import com.sparta.board.service.MypageService;
-import com.sparta.board.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,31 +19,33 @@ public class MypageController {
     private final MypageService mypageService;
 
     @GetMapping("/posts")
-    public List<Map<String, Object>> searchUserPosts(@RequestParam String userid,
-                                                    @RequestParam String nickname) {
-        // DTO에 검색 조건 세팅
-        UserRequestDto userDTO = new UserRequestDto();
-        userDTO.setUserid(userid);
-        userDTO.setNickname(nickname);
+    public List<Map<String, Object>> searchUserPost(@RequestParam Long userid, @RequestParam String username) {
 
-        // Service 호출
-        return mypageService.searchUserPost(userDTO);
+        MypageRequestDto requestDto = new MypageRequestDto();
+        requestDto.setUserid(userid);
+        requestDto.setUsername(username);
+
+        return mypageService.searchUserPost(requestDto);
     }
 
     @GetMapping("/comments")
-    public List<Map<String, Object>> searchUserComments(@RequestParam String userid,
-                                                    @RequestParam String nickname) {
-        // DTO에 검색 조건 세팅
-        UserRequestDto userDTO = new UserRequestDto();
-        userDTO.setUserid(userid);
-        userDTO.setNickname(nickname);
+    public List<Map<String, Object>> searchUserComment(@RequestParam Long userid, @RequestParam String username) {
 
-        // Service 호출
-        return mypageService.searchUserPost(userDTO);
+        MypageRequestDto requestDto = new MypageRequestDto();
+        requestDto.setUserid(userid);
+        requestDto.setUsername(username);
+
+        return mypageService.searchUserComment(requestDto);
     }
 
-    /*
     @GetMapping("/likes")
+    public List<Map<String, Object>> searchUserLike(@RequestParam Long userid, @RequestParam String username) {
 
-     */
+        MypageRequestDto requestDto = new MypageRequestDto();
+        requestDto.setUserid(userid);
+        requestDto.setUsername(username);
+
+        return mypageService.searchUserLike(requestDto);
+    }
+
 }

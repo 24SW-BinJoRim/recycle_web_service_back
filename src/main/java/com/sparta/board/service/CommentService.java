@@ -3,59 +3,125 @@ package com.sparta.board.service;
 import com.sparta.board.common.ApiResponseDto;
 import com.sparta.board.common.ResponseUtils;
 import com.sparta.board.common.SuccessResponse;
-import com.sparta.board.dto.CommentRequestDto;
-import com.sparta.board.dto.CommentResponseDto;
+import com.sparta.board.dto.*;
 import com.sparta.board.entity.Board;
 import com.sparta.board.entity.Comment;
+import com.sparta.board.entity.Information;
 import com.sparta.board.entity.User;
 import com.sparta.board.entity.enumSet.ErrorType;
 import com.sparta.board.entity.enumSet.UserRoleEnum;
 import com.sparta.board.exception.RestApiException;
 import com.sparta.board.repository.BoardRepository;
 import com.sparta.board.repository.CommentRepository;
+import com.sparta.board.repository.InformationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final InformationRepository informationRepository;
+
+    // 특정 게시글의 댓글 조회
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> postComment(CommentPostDto commentPostDto) {
+        String Type = commentPostDto.getType();
+        Long board_id = commentPostDto.getBoard_id();
+        log.info("Searching for keyword: {}", board_id);
+
+        List<CommentResponseDto> commentList = new ArrayList<>();
+        // 검색한 제목에 해당하는 게시글이 있는지 확인
+        if(Type == "used-transaction") { // 중고거래 게시판의 경우
+            Optional<Board> optionalBoard = boardRepository.findById(board_id);
+
+            if (optionalBoard.isPresent()) {
+                Board board = optionalBoard.get();
+
+                for (Comment comment : board.getCommentList()) {
+                    commentList.add(CommentResponseDto.from(comment));
+                }
+            }
+        }
+        else { // 정보게시판의 경우
+            Optional<Information> optionalBoard = informationRepository.findById(board_id);
+
+            if (optionalBoard.isPresent()) {
+                Information information = optionalBoard.get();
+
+                for (Comment comment : information.getCommentList()) {
+                    commentList.add(CommentResponseDto.from(comment));
+                }
+            }
+        }
+        return commentList;
+    }
 
     // 댓글 작성
     @Transactional
-    public ApiResponseDto<CommentResponseDto> createComment(Long id, CommentRequestDto requestDto, User user) {
+    public CommentResponseDto createComment(CommentPostDto commentPostDto, CommentRequestDto requestDto, User user) {
+
+
+        String Type = commentPostDto.getType();
+        Long id = commentPostDto.getBoard_id();
+        log.info("Searching for board_id: {}", id);
+
+        Board board = null;
+        Information information = null;
 
         // 선택한 게시글 DB 조회
-        Optional<Board> board = boardRepository.findById(id);
-        if (board.isEmpty()) {
-            throw new RestApiException(ErrorType.NOT_FOUND_WRITING);
+        if("used-transaction".equals(Type)) { // 중고거래 게시판
+            log.info("중고거래 게시판");
+            Optional<Board> optionalBoard = boardRepository.findById(id);
+
+            if (optionalBoard.isEmpty()) {
+                log.info("중고거래 게시판 내에 해당 게시물을 찾지 못했음");
+                throw new RestApiException(ErrorType.NOT_FOUND_WRITING);
+                //return null;
+            }
+            board = optionalBoard.get();
+        }
+        else { // 정보게시판
+            log.info("정보 게시판");
+            Optional<Information> optionalInformation = informationRepository.findById(id);
+            if (optionalInformation.isEmpty()) {
+                log.info("정보 게시판 내에 해당 게시물을 찾지 못했음");
+                throw new RestApiException(ErrorType.NOT_FOUND_WRITING);
+                //return null;
+            }
+            information = optionalInformation.get();
         }
 
-        Long parentCommentId = requestDto.getParentCommentId();
-        Comment comment = Comment.of(requestDto, board.get(), user);
-        if (parentCommentId == null) {  // parentComment 가 없다면
-            commentRepository.save(comment);    // 바로 저장
-            return ResponseUtils.ok(CommentResponseDto.from(comment));
+        Comment comment;
+        if (board != null) {
+            comment = Comment.createForBoard(requestDto, board, user, Type);
+        } else {
+            comment = Comment.createForInformation(requestDto, information, user, Type);
         }
-        // parentComment 가 있다면 parent comment 에 childComment 를 추가
-        Comment parentComment = commentRepository.findById(parentCommentId)
-                .orElseThrow(() -> new RestApiException(ErrorType.NOT_FOUND_WRITING));
-        parentComment.addChildComment(comment); // parentComment 에 childComment 추가
+
+        if (board == null)
+            log.info("board 가 null 임");
+        if (information == null)
+            log.info("information 이  null 임");
+
         commentRepository.save(comment);
-
-        return ResponseUtils.ok(CommentResponseDto.from(comment));
-
+        return CommentResponseDto.from(comment);
     }
 
     // 댓글 수정
     @Transactional
-    public ApiResponseDto<CommentResponseDto> updateComment(Long id, CommentRequestDto requestDto, User user) {
+    public CommentResponseDto updateComment(Long id, CommentRequestDto requestDto, User user) {
 
         // 선택한 댓글이 DB에 있는지 확인
         Optional<Comment> comment = commentRepository.findById(id);
@@ -74,13 +140,13 @@ public class CommentService {
         commentRepository.flush();   // responseDto 에 modifiedAt 업데이트 해주기 위해 saveAndFlush 사용
 
         // ResponseEntity 에 dto 담아서 리턴
-        return ResponseUtils.ok(CommentResponseDto.from(comment.get()));
+        return CommentResponseDto.from(comment.get());
 
     }
 
     // 댓글 삭제
     @Transactional
-    public ApiResponseDto<SuccessResponse> deleteComment(Long id, User user) {
+    public CommentResponseDto deleteComment(Long id, User user) {
 
         // 선택한 댓글이 DB에 있는지 확인
         Optional<Comment> comment = commentRepository.findById(id);
@@ -97,8 +163,8 @@ public class CommentService {
         // 관리자이거나, 댓글의 작성자와 삭제하려는 사용자의 정보가 일치한다면, 댓글 삭제
         commentRepository.deleteById(id);
 
-        // ResponseEntity 에 상태코드, 메시지 들어있는 DTO 를 담아서 반환
-        return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "댓글 삭제 성공"));
+        log.info("댓글 삭제 성공 !");
+        return null;
 
     }
 

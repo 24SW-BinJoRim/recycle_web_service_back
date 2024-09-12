@@ -23,12 +23,13 @@ public class InformationController {
 
     // 정보 게시판 전체 목록 조회
     @GetMapping("/data")
-    public ApiResponseDto<List<InformationResponseDto>> getInformations() {
+    public List<InformationResponseDto> getInformations() {
         return informationService.getInformations();
     }
 
+    // 게시글 검색
     @GetMapping("/search")
-    public ApiResponseDto<List<InformationResponseDto>> searchInformation(@RequestParam String boardType,
+    public List<InformationResponseDto> searchInformation(@RequestParam String boardType,
                                                                           @RequestParam String keyword) {
         // DTO에 검색 조건 세팅
         BoardSearchDto boardDTO = new BoardSearchDto();
@@ -41,18 +42,13 @@ public class InformationController {
 
     // 선택된 게시글 조회
     @GetMapping("/data/{boardId}")
-    public Information getBoard(@PathVariable Long id) {
-        return informationService.getBoard(id);
+    public InformationResponseDto selectInformation(@PathVariable Long boardId) {
+        return informationService.selectInformation(boardId);
     }
 
+    // 게시글 작성
     @PostMapping("/submit")
-    public ApiResponseDto<InformationResponseDto> createInformation(@RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public InformationResponseDto createInformation(@RequestBody BoardRequestsDto requestsDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return informationService.createInformation(requestsDto, userDetails.getUser());
-    }
-
-    // 선택된 게시글 삭제
-    @DeleteMapping("/{id}")
-    public void deleteBoard(@PathVariable Long id) {
-        informationService.deleteBoard(id);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 
 // 정보 게시판
 public interface InformationRepository extends JpaRepository<Information, Long> {
-    List<Information> findAllByOrderByModifiedAtDesc();
+    List<Information> findAllByOrderByUpdatedAtDesc();
 
     @Query("SELECT i FROM Information i WHERE i.title LIKE %:keyword%")
     List<Information> findByKeyword(@Param("keyword") String keyword);

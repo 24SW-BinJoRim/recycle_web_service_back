@@ -17,11 +17,13 @@ import com.sparta.board.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,43 +40,56 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public ApiResponseDto<SuccessResponse> register(SignupRequestDto requestDto) {
-        String userid = requestDto.getUserid();
+    public ResponseEntity<?> register(SignupRequestDto requestDto) {
+        String username = requestDto.getUsername();
         String nickname = requestDto.getNickname();
         String password = passwordEncoder.encode(requestDto.getPassword());
+        //String password = requestDto.getPassword();
 
         // 회원 중복 확인
-        Optional<User> found = userRepository.findByUserid(userid);
+        Optional<User> found = userRepository.findByUsername(username);
         if (found.isPresent()) {
-            throw new RestApiException(ErrorType.DUPLICATED_USERNAME);
+            log.info("중복된 회원입니다.");
+            ResponseEntity.ok(Map.of("token", false));
         }
 
         // 입력한 username, password, admin 으로 user 객체 만들어 repository 에 저장
         UserRoleEnum role = requestDto.getAdmin() ? UserRoleEnum.ADMIN : UserRoleEnum.USER;
-        userRepository.save(User.of(userid, nickname, password, role));
+        userRepository.save(User.of(username, nickname, password, role));
+        log.info("회원가입 성공 !");
 
-        return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "회원가입 성공"));
+        return ResponseEntity.ok(Map.of("token", true));
     }
 
     // 로그인
     @Transactional(readOnly = true)
-    public ApiResponseDto<SuccessResponse> login(LoginRequestDto requestDto, HttpServletResponse response) {
-        String userid = requestDto.getUserid();
+    public ResponseEntity<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
+        String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
         // 사용자 확인 & 비밀번호 확인
-        Optional<User> user = userRepository.findByUserid(userid);
+        Optional<User> user = userRepository.findByUsername(username);
         if (user.isEmpty() || !passwordEncoder.matches(password, user.get().getPassword())) {
-            throw new RestApiException(ErrorType.NOT_MATCHING_INFO);
+            log.info("존재하지 않는 회원입니다.");
+            ResponseEntity.ok(Map.of("token", false));
         }
 
         // header 에 들어갈 JWT 세팅
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.get().getUserid(), user.get().getRole()));
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(user.get().getUsername(), user.get().getRole()));
 
-        return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "로그인 성공"));
+        return ResponseEntity.ok(Map.of(
+                "token", true,
+                "user", Map.of(
+                        "userid", user.get().getUserid(),
+                        "username", user.get().getUsername(),
+                        "nickname", user.get().getNickname(),
+                        "password", user.get().getPassword()
+                )
+        ));
 
     }
 
+    /*
     // 회원 탈퇴
     @Transactional
     public ApiResponseDto<SuccessResponse> signout(LoginRequestDto requestDto, User user) {
@@ -92,4 +107,5 @@ public class UserService {
 
         return ResponseUtils.ok(SuccessResponse.of(HttpStatus.OK, "회원탈퇴 완료"));
     }
+    */
 }

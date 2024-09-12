@@ -5,11 +5,14 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,11 +23,18 @@ public class Comment extends Timestamped {
     private Long id;
 
     @Column(nullable = false, length = 200)
-    private String contents;
+    private String content;
+
+    @Column(nullable = false)
+    private String boardType;
 
     @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false)
+    @JoinColumn(name = "board_id", nullable = true)
     private Board board;
+
+    @ManyToOne
+    @JoinColumn(name = "information_id", nullable = true)
+    private Information information;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -33,37 +43,27 @@ public class Comment extends Timestamped {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.REMOVE)
     private List<Likes> likesList = new ArrayList<>();
 
-    @Column
-    private Long parentCommentId;
-
-    @OrderBy("createdAt asc ")
-    @OneToMany(mappedBy = "parentCommentId", cascade = CascadeType.ALL)
-    private List<Comment> childCommentList = new ArrayList<>();
-
-    @Builder
-    private Comment(CommentRequestDto requestDto, Board board, User user) {
-        this.contents = requestDto.getContents();
-        this.parentCommentId = requestDto.getParentCommentId();
-        this.board = board;
-        this.user = user;
-    }
-
-    public void update(CommentRequestDto requestDto, User user) {
-        this.contents = requestDto.getContents();
-        this.user = user;
-    }
-
-    public static Comment of(CommentRequestDto requestDto, Board board, User user) {
-        Comment comment = Comment.builder()
-                .requestDto(requestDto)
-                .board(board)
-                .user(user)
-                .build();
-        board.getCommentList().add(comment);
+    public static Comment createForBoard(CommentRequestDto requestDto, Board board, User user, String boardType) {
+        Comment comment = new Comment();
+        comment.content = requestDto.getContent();
+        comment.board = board;
+        comment.user = user;
+        comment.boardType = boardType;
         return comment;
     }
 
-    public void addChildComment(Comment child) {
-        this.getChildCommentList().add(child);
+    public static Comment createForInformation(CommentRequestDto requestDto, Information information, User user, String boardType) {
+        Comment comment = new Comment();
+        comment.content = requestDto.getContent();
+        comment.information = information;
+        comment.user = user;
+        comment.boardType = boardType;
+        return comment;
+    }
+
+
+    public void update(CommentRequestDto requestDto, User user) {
+        this.content = requestDto.getContent();
+        this.user = user;
     }
 }

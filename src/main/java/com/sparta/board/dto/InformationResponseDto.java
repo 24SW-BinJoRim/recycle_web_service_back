@@ -13,12 +13,13 @@ public class InformationResponseDto {
     private Long id;
     private String title;
     private String contents;
-    private String userid;
+    private Long userid;
+    private String username;
     private String nickname;
     private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+    private LocalDateTime updatedAt;
     private Integer likeCount;
-    private List<CommentResponseDto> commentList;
+    //private List<CommentResponseDto> commentList;
 
     @Builder
     private InformationResponseDto(Information entity, List<CommentResponseDto> list) {
@@ -28,9 +29,9 @@ public class InformationResponseDto {
         this.userid = entity.getUser().getUserid();
         this.nickname = entity.getUser().getNickname();
         this.createdAt = entity.getCreatedAt();
-        this.modifiedAt = entity.getModifiedAt();
+        this.updatedAt = entity.getUpdatedAt();
         this.likeCount = entity.getLikesList() != null ? entity.getLikesList().size() : 0;
-        this.commentList = list;
+        //this.commentList = list;
     }
 
     private InformationResponseDto(Information entity) {
@@ -40,9 +41,9 @@ public class InformationResponseDto {
         this.userid = entity.getUser().getUserid();
         this.nickname = entity.getUser().getNickname();
         this.createdAt = entity.getCreatedAt();
-        this.modifiedAt = entity.getModifiedAt();
+        this.updatedAt = entity.getUpdatedAt();
         this.likeCount = entity.getLikesList() != null ? entity.getLikesList().size() : 0;
-        this.commentList = entity.getCommentList().stream().map(CommentResponseDto::from).toList();
+        //this.commentList = entity.getCommentList().stream().map(CommentResponseDto::from).toList();
     }
 
     public static InformationResponseDto from(Information entity, List<CommentResponseDto> list) {

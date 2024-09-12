@@ -1,5 +1,4 @@
 package com.sparta.board.jwt;
-
 import com.sparta.board.entity.enumSet.ErrorType;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +54,4 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.setContext(context);
     }
-
 }

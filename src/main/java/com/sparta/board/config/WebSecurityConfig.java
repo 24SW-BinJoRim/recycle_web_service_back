@@ -1,5 +1,4 @@
 package com.sparta.board.config;
-
 import com.sparta.board.jwt.JwtAuthFilter;
 import com.sparta.board.jwt.JwtUtil;
 import com.sparta.board.security.CustomAuthenticationEntryPoint;

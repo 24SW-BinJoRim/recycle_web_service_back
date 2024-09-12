@@ -2,14 +2,12 @@ package com.sparta.board.controller;
 
 import com.sparta.board.common.ApiResponseDto;
 import com.sparta.board.common.ResponseUtils;
-import com.sparta.board.dto.BoardResponseDto;
-import com.sparta.board.dto.BoardSearchDto;
-import com.sparta.board.dto.MapDto;
-import com.sparta.board.dto.MapResponseDto;
+import com.sparta.board.dto.*;
 import com.sparta.board.entity.Board;
 import com.sparta.board.service.MapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import com.sparta.board.dto.MapRequestDto;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,15 +43,10 @@ public class MapController {
 
     // 검색된 맵 조회 (이름 검색)
     @GetMapping("/search")
-    public ApiResponseDto<List<MapResponseDto>> searchMap(@RequestParam String boardType,
-                                                          @RequestParam String keyword) {
-        // DTO에 검색 조건 세팅
-        BoardSearchDto searchDTO = new BoardSearchDto();
-        searchDTO.setBoardType(boardType);
-        searchDTO.setKeyword(keyword);
-
-        // Service 호출
-        return mapService.searchMap(searchDTO);
+    public List<MapResponseDto> searchMap(@RequestParam String keyword) {
+        MapRequestDto requestDto = new MapRequestDto();
+        requestDto.setKeyword(keyword);
+        return mapService.searchMap(requestDto);
     }
 }
 
